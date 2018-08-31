@@ -11,11 +11,12 @@ const {BlogPosts} = require('./models');
 BlogPosts.create('Cooking','Baking','Jose','09/21/2017');
 BlogPosts.create('Programming','Full stack','John','07/18/2018');
 
-app.route('/blogPosts').get(getRequest).post(jsonParser,postRequest);
+router.get("/", (req, res) => {
+    res.json(BlogPosts.get());
+  });
 
-const getRequest = (req,res) => res.json(BlogPosts.get());
 
-const postRequest = (req,res) => {
+router.post("/",(req,res) => {
     const requiredFields= ['title','content','author','publishDate'];
     for(let i=0;i<requiredFields.length;i++){
         if(!requiredFields[i] in req.body){
@@ -26,12 +27,10 @@ const postRequest = (req,res) => {
     }
    const item = BlogPosts.create(req.body.title,req.body.content,req.body.author,req.body.publishDate);
    res.status(201).json(item);
-}
+});
 
 
-app.route('/blogPosts/:id').put(putRequest).delete(deleteRequest);
-
-const putRequest = (req,res) => {
+router.put("/:id",(req,res) => {
     const requiredFields= ['title','content','author','publishDate'];
     for(let i=0;i<requiredFields.length;i++){
         if(!requiredFields[i] in req.body){
@@ -50,11 +49,11 @@ const putRequest = (req,res) => {
 
       BlogPosts.update({title:req.body.title,content:req.body.content,author:req.body.author,publishDate:req.body.publish});
       res.status(204).end();
-}
+});
 
-const deleteRequest = (req,res) => {
+router.delete("/:id",(req,res) => {
     BlogPosts.delete(req.params.id)
     res.status(204).end();
-};
+});
 
 module.exports = router;
